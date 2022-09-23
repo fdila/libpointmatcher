@@ -277,6 +277,20 @@ T PointMatcher<T>::ErrorMinimizer::getResidualError(const DataPoints& filteredRe
 	return std::numeric_limits<T>::max();
 }
 
+// Final score
+
+template<typename T>
+float PointMatcher<T>::ErrorMinimizer::getFinalScore(const DataPoints& filteredReading, const DataPoints& filteredReference, const OutlierWeights& outlierWeights, const Matches& matches) const
+{
+	assert(matches.ids.rows() > 0);
+	
+	// Fetch paired points
+	typename ErrorMinimizer::ErrorElements mPts(filteredReading, filteredReference, outlierWeights, matches);
+	
+	return (mPts.weights*mPts.matches.dists.transpose())(0,0);
+}
+
+
 //! Helper funtion doing the cross product in 3D and a pseudo cross product in 2D
 template<typename T>
 typename PointMatcher<T>::Matrix PointMatcher<T>::ErrorMinimizer::crossProduct(const Matrix& A, const Matrix& B)
